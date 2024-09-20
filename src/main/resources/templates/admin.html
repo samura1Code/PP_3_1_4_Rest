@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User List</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</head>
+<body>
+<div>
+    <div>
+        <h1>User List</h1>
+        <a href="/admin/newUser" style="text-decoration: none;">
+            <button type="button">Создать пользователя</button>
+        </a>
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Username</th>
+            <th>Roles</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.username}"></td>
+
+            <td>
+                <ul>
+                    <li th:each="role : ${user.roles}" th:text="${role.name}"></li>
+                </ul>
+            </td>
+
+            <td>
+                <form action="/admin/delete" method="post">
+                    <input type="hidden" name="id" th:value="${user.id}">
+                    <button type="submit">Delete</button>
+                </form>
+
+                <form th:action="@{/admin/update/{id}(id=${user.id})}" method="get">
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>
