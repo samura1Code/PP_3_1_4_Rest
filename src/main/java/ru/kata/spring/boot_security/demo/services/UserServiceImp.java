@@ -62,16 +62,9 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void updateUser(Long id, User user) {
-        try {
-            User user0 = getUserById(id);
-            user0.setUsername(user.getUsername());
-            user0.setPassword(encoder.encode(user.getPassword()));
-            user0.setRoles(user.getRoles());
-            userRepository.save(user0);
-        } catch (NullPointerException e) {
-            throw new EntityNotFoundException();
-        }
+    public void updateUser(User user) {
+        user.setPassword(encoder.encode(user.getPassword()));
+        userRepository.save(user);
     }
 
     @Transactional

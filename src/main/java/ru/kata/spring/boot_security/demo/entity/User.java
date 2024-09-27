@@ -5,6 +5,8 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
 import java.util.Collection;
 import java.util.Set;
 
@@ -16,8 +18,13 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @NotBlank(message = "Username is required")
+    @Size(min = 3, message = "Username must be at least 3 characters long")
     private String username;
 
+    @NotBlank(message = "Password cannot be blank")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

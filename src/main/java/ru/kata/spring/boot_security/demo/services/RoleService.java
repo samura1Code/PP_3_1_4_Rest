@@ -11,5 +11,7 @@ public interface RoleService {
 
     List<Role> findAll();
 
+    String getAllRolesString();
+
     Role getByUsername(String username);
 }
