@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import ru.kata.spring.boot_security.demo.entity.Role;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 
+import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -37,6 +38,12 @@ public class RoleServiceImp implements RoleService {
 
     @Override
     public Role getByUsername(String username) {
-         return roleRepository.findByName(username); //roleRepository.findByUsername(username);
+        return roleRepository.findByName(username);
+    }
+
+    @Override
+    public Role getRoleById(Long id) {
+        return roleRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Role not found with id: " + id));
     }
 }

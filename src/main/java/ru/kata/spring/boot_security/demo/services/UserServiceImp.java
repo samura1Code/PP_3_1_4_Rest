@@ -1,5 +1,6 @@
 package ru.kata.spring.boot_security.demo.services;
 
+import io.micrometer.common.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -14,6 +15,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImp implements UserService {
@@ -33,6 +35,7 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public List<User> getUsers() {
+
         return userRepository.findAll();
     }
 
@@ -62,10 +65,26 @@ public class UserServiceImp implements UserService {
 
     @Transactional
     @Override
-    public void updateUser(User user) {
-        user.setPassword(encoder.encode(user.getPassword()));
-        userRepository.save(user);
+    public User updateUser(User user) {
+        User existingUser = userRepository.findById(user.getId())
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + user.getId()));
+
+        existingUser.setUsername(user.getUsername());
+
+        if (StringUtils.isNotBlank(user.getPassword())) {
+            existingUser.setPassword(encoder.encode(user.getPassword()));
+        }
+
+        if (user.getRoles() != null && !user.getRoles().isEmpty()) {
+            Set<Role> roles = user.getRoles().stream()
+                    .map(role -> roleService.getRoleById(role.getId()))
+                    .collect(Collectors.toSet());
+            existingUser.setRoles(roles);
+        }
+
+        return userRepository.save(existingUser);
     }
+
 
     @Transactional
     @Override
