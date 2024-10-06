@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
     // Запрашиваем данные о пользователе через API
-    fetch("/user/profile_user")
+    fetch("api/user/profile_user")
         .then(response => response.json())
         .then(user => {
             // Заполняем поля на странице
