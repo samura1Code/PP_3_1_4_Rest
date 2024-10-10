@@ -24,7 +24,7 @@ public class User implements UserDetails {
     private String username;
 
     @NotBlank(message = "Password cannot be blank")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Size(min = 3, message = "Password must be at least 6 characters long")
     private String password;
 
     @ManyToMany(fetch = FetchType.EAGER)

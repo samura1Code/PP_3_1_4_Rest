@@ -13,7 +13,6 @@ import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,8 +47,8 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public User getUserById(Long id) {
-        Optional<User> employee = userRepository.findById(id);
-        return employee.orElse(new User());
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
     }
 
     @Transactional
@@ -71,10 +70,12 @@ public class UserServiceImp implements UserService {
 
         existingUser.setUsername(user.getUsername());
 
+        // Обновление пароля
         if (StringUtils.isNotBlank(user.getPassword())) {
             existingUser.setPassword(encoder.encode(user.getPassword()));
         }
 
+        // Обновление ролей
         if (user.getRoles() != null && !user.getRoles().isEmpty()) {
             Set<Role> roles = user.getRoles().stream()
                     .map(role -> roleService.getRoleById(role.getId()))
@@ -86,10 +87,13 @@ public class UserServiceImp implements UserService {
     }
 
 
+
     @Transactional
     @Override
     public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+        userRepository.delete(user);
     }
 
 }

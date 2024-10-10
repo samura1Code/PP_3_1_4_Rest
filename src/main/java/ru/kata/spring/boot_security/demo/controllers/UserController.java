@@ -32,7 +32,9 @@ public class UserController {
     @GetMapping("/profile_user")
     public ResponseEntity<User> getUserProfile(Principal principal) {
         User currentUser = userService.findByUsername(principal.getName());
+        if (currentUser == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(currentUser, HttpStatus.OK);
     }
-
 }
